@@ -4,7 +4,7 @@
 #include <math.h>
 
 #define SEED 5
-#define N 20
+#define N 200
 int *array;    // Arreglo original
 int *localArray; // Arreglo de proceso
 int	taskid,    // ID del procesador */
@@ -46,12 +46,12 @@ int main(int argc, char *argv[]) {
   }
 
   //Imprime el arreglo original
-  if(taskid==0){
+  /*if(taskid==0){
     printf("Arreglo Original\n");
     for(int i=0;i<N;i++)
       printf("%d ",array[i]);
     printf("\n");
-  }
+  }*/
 	//Comienza a medir el Tiempo
 	double ti= MPI_Wtime();
   //Divide el arreglo a cada proceso
@@ -153,7 +153,7 @@ void sendAndSort(){
             if(flag==1 && taskid < numtasks-1){
               sright++;
               //Enviar ultimo elemnto a la derecha
-              //printf("Proceso %d envia a %d\n",taskid,right);
+              printf("Proceso %d envia a %d\n",taskid,right);
               MPI_Send(&localArray[size] //referencia al vector de elementos a enviar
                       ,1 // tamaño del vector a enviar
                       ,MPI_INT // Tipo de dato que envias
@@ -161,7 +161,7 @@ void sendAndSort(){
                       ,0 //etiqueta
                       ,MPI_COMM_WORLD); //Comunicador por el que se manda
               //Recibir de la tarea a la derecha
-              //printf("Proceso %d recibe de %d\n",taskid,right);
+              printf("Proceso %d recibe de %d\n",taskid,right);
               MPI_Recv(&localArray[size+1] // Referencia al vector donde se almacenara lo recibido
                       ,1 // tamaño del vector a recibir
                       ,MPI_INT // Tipo de dato que recibe
@@ -169,13 +169,13 @@ void sendAndSort(){
                       ,1 // etiqueta
                       ,MPI_COMM_WORLD // Comunicador por el que se recibe
                       ,&status); // estructura informativa del estado
-            }else if((start%2)==0 && taskid > 0){
+            }/*else*/ if((start%2)==0 && taskid > 0){
               sleft++;
               //Enviar primer elemnto a la Izquierda
-              //printf("Proceso %d envia a %d\n",taskid,left);
+              printf("Proceso %d envia a %d\n",taskid,left);
               MPI_Send(&localArray[1],1,MPI_INT,left,1,MPI_COMM_WORLD);
               //Recibir ultimo elmento de la izquierda
-              //printf("Proceso %d recibe de %d\n",taskid,left);
+              printf("Proceso %d recibe de %d\n",taskid,left);
               MPI_Recv(&localArray[0],1,MPI_INT,left,0,MPI_COMM_WORLD,&status);
             }
         }
@@ -197,19 +197,19 @@ void sendAndSort(){
             if((start%2)==1 && taskid > 0){
               sleft++;
               //Enviar ultimo elemnto a la Izquierda
-              //printf("Proceso %d envia a %d\n",taskid,left);
+              printf("Proceso %d envia a %d\n",taskid,left);
               MPI_Send(&localArray[1],1,MPI_INT,left,1,MPI_COMM_WORLD);
               //Recibir ultimo elmento de la izquierda
-              //printf("Proceso %d recibe de %d\n",taskid,left);
+              printf("Proceso %d recibe de %d\n",taskid,left);
               MPI_Recv(&localArray[0],1,MPI_INT,left,0,MPI_COMM_WORLD,&status);
 
-            }else if(flag==0 && taskid < numtasks-1){
+            }/*else*/ if(flag==0 && taskid < numtasks-1){
               sright++;
               //Enviar ultimo elemnto a la derecha
-              //printf("Proceso %d envia a %d\n",taskid,right);
+              printf("Proceso %d envia a %d\n",taskid,right);
               MPI_Send(&localArray[size],1,MPI_INT,right,0,MPI_COMM_WORLD);
               //Recibir de la tarea a la derecha
-              //printf("Proceso %d recibe de %d\n",taskid,right);
+              printf("Proceso %d recibe de %d\n",taskid,right);
               MPI_Recv(&localArray[size+1],1,MPI_INT,right,1,MPI_COMM_WORLD,&status);
             }
         }
