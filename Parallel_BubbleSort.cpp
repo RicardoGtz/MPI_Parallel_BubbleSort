@@ -12,8 +12,8 @@ int	taskid,    // ID del procesador */
   start,       // Index de incio de su parte del arreglo
   size,        // Tamaño de elementos del procesador
   left=-1,     // Indice del vecino a la izquierda
-  right=-1;    // Indice del vecino a la derecha
-
+  right=-1,    // Indice del vecino a la derecha
+	*result;
 void createFile(char c[]);
 void loadFile(char c[]);
 void splitArray();
@@ -52,7 +52,8 @@ int main(int argc, char *argv[]) {
       printf("%d ",array[i]);
     printf("\n");
   }
-
+	//Comienza a medir el Tiempo
+	double ti= MPI_Wtime();
   //Divide el arreglo a cada proceso
   splitArray();
 
@@ -66,6 +67,19 @@ int main(int argc, char *argv[]) {
     //Envia los resultados al nodo maestro
     reportToMaster();
   }
+	//Termina de medir el tiempo
+	double tf= MPI_Wtime();
+	if(taskid==0){
+		//Imprime el arreglo final ordenado
+	  printf("*****************************\n");
+	  printf("Arreglo Ordenado\n");
+	  for(int i=0;i<N;i++)
+	    printf("%d ",result[i]);
+	  printf("\n");
+		//Imprime el tiempo de ejecucion
+		printf("Tiempo de ejecucion: %f\n",(tf-ti) );
+		free(result);
+	}
   //Finaliza la seccion paralela
   MPI_Finalize();
   free(array);
@@ -210,13 +224,13 @@ void sendAndSort(){
         }
     }
   }
-  for(int i=1;i<size+1;i++)
+  /*for(int i=1;i<size+1;i++)
     printf("[%d] %d ",taskid,localArray[i]);
-  printf("\n");
+  printf("\n");*/
 }
 void collectFromWorkers(){
   MPI_Status status;
-  int result[N];
+  result=	(int *)malloc(N*sizeof(int));
   int buffer[2];
   for(int i=1;i<numtasks;i++){
     //Recibe parametros de los trabajadores
@@ -229,12 +243,6 @@ void collectFromWorkers(){
   //Añade los resultados del nodo maestro al resultados
   for(int i=start;i<start+size;i++)
     result[i-1]=localArray[i];
-  //Imprime el arreglo final ordenado
-  printf("*****************************\n");
-  printf("Arreglo Ordenado\n");
-  for(int i=0;i<N;i++)
-    printf("%d ",result[i]);
-  printf("\n");
 }
 void reportToMaster(){
   int buffer[2];
