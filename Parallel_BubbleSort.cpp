@@ -4,7 +4,7 @@
 #include <math.h>
 
 #define SEED 5
-#define N 200
+#define N 200000
 int *array;    // Arreglo original
 int *localArray; // Arreglo de proceso
 int	taskid,    // ID del procesador */
